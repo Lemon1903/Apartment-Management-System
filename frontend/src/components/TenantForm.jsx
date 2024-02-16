@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-function FormField({ input, index }) {
+function FormField({ input, index, onDelete }) {
   const form = useForm();
   const { id, name, email, contact_num, alt_contact_num, emergency_num, alt_emergency_num } = input;
 
@@ -14,7 +14,7 @@ function FormField({ input, index }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-black">Tenant {index + 1}</h2>
-        <AlertPopupDialog onContinue={() => form.handleDelete(index)}>
+        <AlertPopupDialog onContinue={() => form.handleDelete(index, onDelete)}>
           <Button
             type="button"
             variant="icon"
@@ -121,7 +121,7 @@ function FormField({ input, index }) {
   );
 }
 
-export default function TenantForm({ tenants, onSubmit }) {
+export default function TenantForm({ tenants, onSubmit, onDelete }) {
   const form = useForm();
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function TenantForm({ tenants, onSubmit }) {
       onSubmit={form.handleSubmit(onSubmit)}
     >
       {form.inputs.map((input, index) => (
-        <FormField key={index} input={input} index={index} />
+        <FormField key={index} input={input} index={index} onDelete={onDelete} />
       ))}
     </form>
   );

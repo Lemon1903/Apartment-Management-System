@@ -80,7 +80,7 @@ export default function FormContextProvider({ children }) {
     setInputs([...inputs, { id: uuidv4(), ...defaultValues }]);
   }
 
-  async function handleDelete(index) {
+  async function handleDelete(index, callback) {
     if (isEditing) {
       const tenantUid = inputs[index].id;
       const tenantRef = doc(firestore, "users", tenantUid);
@@ -122,6 +122,7 @@ export default function FormContextProvider({ children }) {
       }
 
       setIsEditing(false);
+      callback(inputs.length - 1);
     }
 
     if (inputs.length === 1) return;

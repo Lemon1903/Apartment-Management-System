@@ -38,6 +38,13 @@ export default function ViewTenantDialog({ roomNumber }) {
     setIsOpen(open);
   }
 
+  function onDelete(tenantsLength) {
+    if (tenantsLength === 0) {
+      setIsOpen(false);
+      window.location.reload();
+    }
+  }
+
   async function confirmEdit(values) {
     values.forEach(async (value) => {
       try {
@@ -84,7 +91,7 @@ export default function ViewTenantDialog({ roomNumber }) {
         {action === "viewHistory" && <PaymentHistory roomNumber={roomNumber} />}
         {action === "viewTenants" &&
           (tenants.length === 0 ? <Skeleton className="h-80 w-[574px]" /> : <TenantCarousel tenants={tenants} />)}
-        {action === "editTenants" && <TenantForm tenants={tenants} />}
+        {action === "editTenants" && <TenantForm tenants={tenants} onDelete={onDelete} />}
         {action !== "viewHistory" && (
           <DialogFooter className="items-center gap-8 sm:justify-center">
             {action === "viewTenants" && (
