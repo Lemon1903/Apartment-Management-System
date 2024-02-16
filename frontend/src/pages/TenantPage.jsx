@@ -13,6 +13,9 @@ export default function TenantPage() {
 
   useEffect(() => {
     if (user) {
+      //invalid sign in of guest
+      if (user.isAnonymous) navigate("/");
+
       // get the tenant document and getthe room number
       async function getRoomNumber() {
         const tenantSnap = await getDoc(doc(firestore, "users", user.uid));
@@ -25,11 +28,6 @@ export default function TenantPage() {
       getRoomNumber();
     }
   }, [user]);
-
-  if (!user || user?.isAnonymous) {
-    navigate("/");
-    return;
-  }
 
   return (
     <div>

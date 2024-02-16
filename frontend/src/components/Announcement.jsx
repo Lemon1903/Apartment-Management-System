@@ -1,20 +1,10 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { firestore } from "@/lib/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import TrashBin from "../assets/icons/trash-bin.svg?react";
+import AlertPopupDialog from "./dialogs/AlertPopupDialog";
 import { Button } from "./ui/button";
 
 function DeleteAlert({ setButtonHovered, announcementId }) {
@@ -33,31 +23,16 @@ function DeleteAlert({ setButtonHovered, announcementId }) {
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          className="h-5 w-5 border-none bg-transparent p-0"
-          onMouseEnter={() => setButtonHovered(true)}
-          onMouseLeave={() => setButtonHovered(false)}
-          disabled={isLoading}
-        >
-          <TrashBin className="fill-border hover:fill-accent" />
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the announcement from the database and all
-            servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteAnnouncement}>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <AlertPopupDialog onContinue={deleteAnnouncement}>
+      <Button
+        className="h-5 w-5 border-none bg-transparent p-0"
+        onMouseEnter={() => setButtonHovered(true)}
+        onMouseLeave={() => setButtonHovered(false)}
+        disabled={isLoading}
+      >
+        <TrashBin className="fill-border hover:fill-accent" />
+      </Button>
+    </AlertPopupDialog>
   );
 }
 

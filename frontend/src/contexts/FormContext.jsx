@@ -1,3 +1,5 @@
+import { firestore } from "@/lib/firebase";
+import { arrayRemove, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -39,6 +41,28 @@ const defaultValues = {
 export default function FormContextProvider({ children }) {
   const [inputs, setInputs] = useState([{ id: uuidv4(), ...defaultValues }]);
   const [errors, setErrors] = useState([{ ...defaultValues }]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  function initializeTenants(tenants) {
+    if (tenants === undefined) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsEditing(true);
+    setInputs(
+      tenants.map((tenant) => ({
+        id: tenant.id,
+        name: tenant.name,
+        email: tenant.email,
+        contact_num: tenant.contact_num,
+        alt_contact_num: tenant.alt_contact_num,
+        emergency_num: tenant.emergency_num,
+        alt_emergency_num: tenant.alt_emergency_num,
+      }))
+    );
+    setErrors(tenants.map(() => ({ ...defaultValues })));
+  }
 
   function handleChange(event, id) {
     const { name, value } = event.target;
@@ -56,7 +80,50 @@ export default function FormContextProvider({ children }) {
     setInputs([...inputs, { id: uuidv4(), ...defaultValues }]);
   }
 
-  function handleDelete(index) {
+  async function handleDelete(index) {
+    if (isEditing) {
+      const tenantUid = inputs[index].id;
+      const tenantRef = doc(firestore, "users", tenantUid);
+      console.log("Deleting tenant with uid: ", tenantUid);
+
+      // delete user aithentication
+      const response = await fetch(`http://localhost:3001/deleteUser/${tenantUid}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+
+      // delete the tenant from the room
+      const q = query(collection(firestore, "rooms"), where("tenants", "array-contains", tenantRef));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        try {
+          await updateDoc(doc.ref, {
+            tenants: arrayRemove(tenantRef),
+          });
+          console.log("Tenant successfully removed from room: ", doc.id);
+        } catch (error) {
+          console.error("Error removing tenant from room: ", error);
+        }
+      });
+
+      // delete the user document
+      try {
+        await deleteDoc(doc(firestore, "users", tenantUid));
+        console.log("Tenant successfully deleted!");
+      } catch (error) {
+        console.error("Error removing document: ", error);
+      }
+
+      setIsEditing(false);
+    }
+
     if (inputs.length === 1) return;
     const newInputs = inputs.filter((_, idx) => idx !== index);
     setInputs(newInputs);
@@ -96,7 +163,9 @@ export default function FormContextProvider({ children }) {
   }
 
   return (
-    <FormContext.Provider value={{ inputs, errors, handleSubmit, handleAdd, handleChange, handleDelete }}>
+    <FormContext.Provider
+      value={{ inputs, errors, isEditing, initializeTenants, handleSubmit, handleAdd, handleChange, handleDelete }}
+    >
       {children}
     </FormContext.Provider>
   );

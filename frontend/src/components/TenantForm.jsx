@@ -1,5 +1,7 @@
 import Trashbin from "@/assets/icons/trash-bin.svg?react";
 import { useForm } from "@/contexts/FormContext";
+import { useEffect } from "react";
+import AlertPopupDialog from "./dialogs/AlertPopupDialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -12,15 +14,16 @@ function FormField({ input, index }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-black">Tenant {index + 1}</h2>
-        <Button
-          type="button"
-          variant="icon"
-          size="icon"
-          className="h-10 w-10 border-none bg-transparent hover:bg-transparent"
-          onClick={() => form.handleDelete(index)}
-        >
-          <Trashbin className="fill-border hover:fill-accent" />
-        </Button>
+        <AlertPopupDialog onContinue={() => form.handleDelete(index)}>
+          <Button
+            type="button"
+            variant="icon"
+            size="icon"
+            className="h-10 w-10 border-none bg-transparent hover:bg-transparent"
+          >
+            <Trashbin className="fill-border hover:fill-accent" />
+          </Button>
+        </AlertPopupDialog>
       </div>
       <div className="space-y-1">
         <Label htmlFor="tenantName" className="text-2xl font-medium">
@@ -120,6 +123,10 @@ function FormField({ input, index }) {
 
 export default function TenantForm({ tenants, onSubmit }) {
   const form = useForm();
+
+  useEffect(() => {
+    form.initializeTenants(tenants);
+  }, [tenants]);
 
   return (
     <form

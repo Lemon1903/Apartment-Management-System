@@ -3,9 +3,10 @@ import TenantCarousel from "@/components/TenantCarousel";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useForm } from "@/contexts/FormContext";
 import { firestore } from "@/lib/firebase";
 import { GFORM_PAYMENT } from "@/lib/room-links";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import PaymentHistory from "../PaymentHistory";
 import TenantForm from "../TenantForm";
@@ -16,6 +17,7 @@ export default function ViewTenantDialog({ roomNumber }) {
   const [isOpen, setIsOpen] = useState(false);
   const [tenants, setTenants] = useState([]);
   const { admin, user } = useAuth();
+  const { handleSubmit } = useForm();
 
   useEffect(() => {
     async function getTenants() {
@@ -24,24 +26,35 @@ export default function ViewTenantDialog({ roomNumber }) {
       const tenantsRef = rooms.get("tenants");
       tenantsRef.forEach(async (tenantRef) => {
         const tenant = await getDoc(tenantRef);
-        tenants.push(tenant.data());
+        tenants.push({ id: tenant.id, ...tenant.data() });
       });
       setTenants(tenants);
     }
     getTenants();
   }, []);
 
-  async function deleteTenants() {
-    // Remove tenant/s from room in database
-    // if isAdding, remove the form field in the carousel
-    // else remove the tenant document from the database
-  }
-
-  function confirmEdit() {}
-
   function handleOpenChange(open) {
     if (!open) setAction("viewTenants");
     setIsOpen(open);
+  }
+
+  async function confirmEdit(values) {
+    values.forEach(async (value) => {
+      try {
+        await updateDoc(doc(firestore, "users", value.id), {
+          name: value.name,
+          email: value.email,
+          contact_num: value.contact_num,
+          alt_contact_num: value.alt_contact_num,
+          emergency_num: value.emergency_num,
+          alt_emergency_num: value.alt_emergency_num,
+        });
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+
+      window.location.reload();
+    });
   }
 
   return (
@@ -93,7 +106,7 @@ export default function ViewTenantDialog({ roomNumber }) {
               </>
             )}
             {action === "editTenants" && (
-              <Button type="submit" form="tenant-form" size="lg" className="w-64" onClick={confirmEdit}>
+              <Button type="submit" form="tenant-form" size="lg" className="w-64" onClick={handleSubmit(confirmEdit)}>
                 Confirm
               </Button>
             )}

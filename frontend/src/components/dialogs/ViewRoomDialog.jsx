@@ -92,6 +92,8 @@ export default function ViewRoomDialog({ roomNumber }) {
       } catch (error) {
         console.log("room uopdate error:", error);
       }
+
+      window.location.reload();
     });
   }
 
