@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "SF Pro Rounded";
+  src: url("src\\assets\\sf-pro-rounded\\SF-Pro-Rounded-Heavy.otf") format("otf");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro Rounded";
+  src: url("src\\assets\\sf-pro-rounded\\SF-Pro-Rounded-Medium.otf") format("otf");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro Rounded";
+  src: url("src\\assets\\sf-pro-rounded\\SF-Pro-Rounded-Regular.otf") format("otf");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --background: 70, 88%, 84%;
+    --foreground: 222.2, 84%, 4.9%;
+
+    /* --card: 236, 19%, 84%;
+    --card-foreground: 175, 77%, 26%; */
+
+    --popover: 174, 20%, 60%;
+    --popover-foreground: 175, 77%, 26%;
+
+    --primary: 70, 88%, 84%;
+    --primary-foreground: 175, 77%, 26%;
+
+    --secondary: 236, 19%, 84%;
+    --secondary-foreground: 175, 77%, 26%;
+
+    --muted: 236, 19%, 84%;
+    --muted-foreground: 175, 77%, 26%;
+
+    --accent: 223, 18%, 23%;
+    --accent-foreground: 287, 60%, 97%;
+
+    --destructive: 10, 66%, 56%;
+    --destructive-foreground: 287, 60%, 97%;
+
+    --border: 175, 77%, 26%;
+    --input: 287, 60%, 97%;
+    --ring: 222.2, 84%, 4.9%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply flex h-screen justify-center bg-background font-sf-pro-rounded text-foreground;
+  }
+}
+
+.test {
+  border-radius: 19.489px;
+  border-bottom: 10.042px solid var(--Stroke, #0f766e);
+  border-left: 10.042px solid var(--Stroke, #0f766e);
+  background: var(--Color-surface-primary, #85ada9);
+}
