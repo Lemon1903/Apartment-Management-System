@@ -1,4 +1,3 @@
-import FormContextProvider from "@/contexts/FormContext";
 import { firestore } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Loader2 } from "lucide-react";
@@ -25,18 +24,16 @@ export default function Room({ roomNumber, width, height }) {
   }, []);
 
   return (
-    <FormContextProvider>
-      <div
-        className={twMerge(
-          "overflow-hidden rounded-3xl",
-          !hasTenants && "border-b-8 border-l-8 border-border bg-secondary",
-          isLoading && "cursor-not-allowed"
-        )}
-        style={{ width: `${width}px`, height: `${height}px` }}
-      >
-        {isLoading && <Loader2 className="m-auto h-full animate-spin" />}
-        {hasTenants ? <ViewTenantDialog roomNumber={roomNumber} /> : <ViewRoomDialog roomNumber={roomNumber} />}
-      </div>
-    </FormContextProvider>
+    <div
+      className={twMerge(
+        "overflow-hidden rounded-3xl",
+        !hasTenants && "border-b-8 border-l-8 border-border bg-secondary",
+        isLoading && "cursor-not-allowed"
+      )}
+      style={{ width: `${width}px`, height: `${height}px` }}
+    >
+      {isLoading && <Loader2 className="m-auto h-full animate-spin" />}
+      {hasTenants ? <ViewTenantDialog roomNumber={roomNumber} /> : <ViewRoomDialog roomNumber={roomNumber} />}
+    </div>
   );
 }
